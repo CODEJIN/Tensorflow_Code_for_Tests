@@ -18,7 +18,7 @@ def Correlation2D(x, y):
     sumed_Pow_Hidden_Tensor = tf.reduce_sum(tf.pow(avgsub_Hidden_Tensor, 2), axis=1, keepdims= True)    #[L, 1]
 
     correlation_Tensor = tf.matmul(avgsub_Input_Tensor, tf.transpose(avgsub_Hidden_Tensor)) / tf.sqrt(tf.matmul(sumed_Pow_Input_Tensor, tf.transpose(sumed_Pow_Hidden_Tensor)));    #[M, L]
-    p_Value_Tensor = 1 - tf.erf(tf.abs(correlation_Tensor) * tf.sqrt(tf.cast(tf.shape(reshaped_Input_Tensor)[1], tf.float32)) / tf.sqrt(2.0));  #[M, L]
+    p_Value_Tensor = 1 - tf.erf(tf.abs(correlation_Tensor) * tf.sqrt(tf.cast(tf.shape(x)[1], tf.float32)) / tf.sqrt(2.0));  #[M, L]
 
     correlation_Tensor = tf.identity(correlation_Tensor, name="correlation");
     p_Value_Tensor = tf.identity(p_Value_Tensor, name="p_value");
