@@ -9,13 +9,14 @@ def MDS(x, dimension = 2):
         dimension: int32 or scalar tensor. The compressed dimension.
     Returns:        
         mds_Coordinate: A `Tensor` representing the compressed coordinates. Size is (N x Dimension)
-    """    
-    element_Number = tf.shape(x)[1];
-
-    j = tf.eye(element_Number) - 1/element_Number * tf.ones_like(x);
-    b = 0.5 * (j @ tf.pow(x, 2) @ j);
+    """
+    element_Number = tf.shape(x)[1];    
+    j = tf.eye(element_Number) - tf.cast(1/element_Number, tf.float32) * tf.ones_like(x);
+    b = -0.5 * (j @ tf.pow(x, 2) @ j);
     eigen_Value, eigen_Vector = tf.self_adjoint_eig(b)
-    mds_Coordinate = eigen_Vector[:, :dimension] @ tf.sqrt(tf.diag(-eigen_Value[:dimension]));
+    selected_Eigen_Value, top_Eigen_Value_Indice = tf.nn.top_k(eigen_Value, k=dimension);
+    selected_eigen_Vector = tf.transpose(tf.gather(tf.transpose(eigen_Vector), top_Eigen_Value_Indice))
+    mds_Coordinate = selected_eigen_Vector @ tf.sqrt(tf.diag(selected_Eigen_Value));
     mds_Coordinate = tf.identity(mds_Coordinate, name="mds_Coordinate");
 
     return mds_Coordinate;
